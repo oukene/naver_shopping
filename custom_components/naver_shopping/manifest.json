@@ -1,0 +1,16 @@
+{
+  "domain": "naver_shopping",
+  "name": "Naver Shopping",
+  "config_flow": true,
+  "documentation": "https://github.com/oukene/Naver_Shopping",
+  "requirements": [],
+  "ssdp": [],
+  "zeroconf": [],
+  "homekit": {},
+  "dependencies": [],
+  "codeowners": [
+    "@oukene"
+  ],
+  "iot_class": "",
+  "version": "1.0.0"
+}

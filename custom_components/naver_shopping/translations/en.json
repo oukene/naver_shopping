@@ -1,0 +1,36 @@
+{
+    "title": "Naver Shopping",
+    "config": {
+        "step": {
+            "confirm": {
+                "description": "Do you want to set up?"
+            },
+            "user": {
+                "data": {
+                    "client_id": "X-Naver-Client-Id",
+                    "client_id2": "X-Naver-Client-Secret"
+                },
+                "description": "Click OK to add intergration"
+            }
+        }
+    },
+    "options": {
+        "step": {
+            "init": {
+                "title": "Naver Shopping Options",
+                "data": {
+                    "add_another": "Select to add a search keyword"
+                },
+                "description": "If unchecked it will be deleted"
+            },
+            "entity": {
+                "title": "add search keyword",
+                "data": {
+                    "word": "search keyword",
+                    "refresh_period": "refresh period(minute)",
+                    "add_another": "add more search keyword"
+                }
+            }
+        }
+    }
+}
