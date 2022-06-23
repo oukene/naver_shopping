@@ -5,6 +5,7 @@
 - 네이버 API 발급
 
 https://developers.naver.com/apps/#/register
+
 네이버 개발자 센터에서 애플리케이션 등록후 키 발급
 
 Client ID 와 Client Secret 키를 설치시에 입력
