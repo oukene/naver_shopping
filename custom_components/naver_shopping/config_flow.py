@@ -2,7 +2,9 @@
 from copy import deepcopy
 from distutils.command.config import config
 import logging
+from select import select
 from unicodedata import name
+from xmlrpc.client import boolean
 import aiohttp
 import asyncio
 import json
@@ -21,7 +23,7 @@ from homeassistant.helpers.device_registry import (
     async_entries_for_config_entry
 )
 
-from .const import CONF_CLIENT_ID, CONF_CLIENT_SECRET, CONF_REFRESH_PERIOD, CONF_KEYWORDS, CONF_WORD, DOMAIN, CONF_ADD_ANODHER, NAME, REFRESH_MIN
+from .const import CONF_CLIENT_ID, CONF_CLIENT_SECRET, CONF_REFRESH_PERIOD, CONF_KEYWORDS, CONF_SORT_TYPE, CONF_WORD, DOMAIN, CONF_ADD_ANODHER, NAME, REFRESH_MIN, SORT_TYPES, SORT_TYPES_REVERSE
 
 from homeassistant.helpers.device_registry import (
     async_get_registry,
@@ -120,7 +122,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
 
         for host in self.data[CONF_KEYWORDS]:
             for e in entities:
-                if e.original_name == host[CONF_WORD]:
+                if e.original_name == host[CONF_WORD] + "-" + SORT_TYPES_REVERSE[host[CONF_SORT_TYPE]]:
                     name = e.original_name
 
                     all_entities[e.entity_id] = '{}'.format(
@@ -128,6 +130,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
 
                     all_entities_by_id[(
                                         host[CONF_WORD],
+                                        host[CONF_SORT_TYPE],
                                         host[CONF_REFRESH_PERIOD]
                                     )] = e.entity_id
 
@@ -148,7 +151,8 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                         self.data[CONF_KEYWORDS].append(
                             {
                                 CONF_WORD: key[0],
-                                CONF_REFRESH_PERIOD: key[1]
+                                CONF_SORT_TYPE: key[1],
+                                CONF_REFRESH_PERIOD: key[2]
                             }
                         )
 
@@ -186,6 +190,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                 self.data[CONF_KEYWORDS].append(
                     {
                         CONF_WORD: user_input.get(CONF_WORD, user_input[CONF_WORD]),
+                        CONF_SORT_TYPE: SORT_TYPES[user_input.get(CONF_SORT_TYPE, user_input[CONF_SORT_TYPE])],
                         CONF_REFRESH_PERIOD: user_input.get(CONF_REFRESH_PERIOD, user_input[CONF_REFRESH_PERIOD])
                     }
                 )
@@ -203,6 +208,11 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
             data_schema=vol.Schema(
                     {
                         vol.Required(CONF_WORD, default=None): cv.string,
+                        vol.Required(CONF_SORT_TYPE, default=SORT_TYPES_REVERSE["sim"]): vol.In([SORT_TYPES_REVERSE["sim"],
+                                                                                        SORT_TYPES_REVERSE["asc"],
+                                                                                        SORT_TYPES_REVERSE["dsc"],
+                                                                                        SORT_TYPES_REVERSE["date"]
+                                                                                        ]),
                         vol.Required(CONF_REFRESH_PERIOD, default=REFRESH_MIN): int,
                         vol.Optional(CONF_ADD_ANODHER): cv.boolean,
                     }

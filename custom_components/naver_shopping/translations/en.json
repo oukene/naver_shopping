@@ -27,6 +27,7 @@
                 "title": "add search keyword",
                 "data": {
                     "word": "search keyword",
+                    "sort_type": "sort type",
                     "refresh_period": "refresh period(minute)",
                     "add_another": "add more search keyword"
                 }

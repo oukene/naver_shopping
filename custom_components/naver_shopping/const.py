@@ -17,13 +17,27 @@ CONF_SEARCH_KEYWORD = "search_keyword"
 CONF_KEYWORDS = "keywords"
 CONF_WORD = "word"
 CONF_REFRESH_PERIOD = "refresh_period"
+CONF_SORT_TYPE = "sort_type"
+
+SORT_TYPES = {
+    "유사도순": "sim",
+    "가격낮은순": "asc",
+    "가격높은순": "dsc",
+    "등록날짜순": "date"
+}
+
+SORT_TYPES_REVERSE = {
+    "sim": "유사도순",
+    "asc": "가격낮은순",
+    "dsc": "가격높은순",
+    "date": "등록날짜순"
+}
 
 CONF_URL = "https://openapi.naver.com/v1/search/shop.json"
 
 
 DISPLAY_COUNT = 1
 DISPLAY_START = 1
-SORT_TYPE = "sim"
 REFRESH_MIN = 60
 
 ATTR_LINK = "link"

@@ -52,6 +52,7 @@ async def async_setup_entry(hass, config_entry, async_add_devices):
                 client_id,
                 client_secret,
                 entity[CONF_WORD],
+                entity[CONF_SORT_TYPE],
                 entity[CONF_REFRESH_PERIOD]
             )
         )
@@ -153,7 +154,7 @@ class SensorBase(SensorEntity):
 class NaverShoppingSensor(SensorBase):
     """Representation of a Thermal Comfort Sensor."""
 
-    def __init__(self, hass, device, client_id, client_secret, word, refresh_period):
+    def __init__(self, hass, device, client_id, client_secret, word, sort_type, refresh_period):
         """Initialize the sensor."""
         super().__init__(device)
 
@@ -161,8 +162,8 @@ class NaverShoppingSensor(SensorBase):
         self._word = word
 
         self.entity_id = async_generate_entity_id(
-            ENTITY_ID_FORMAT, "{}_{}".format(NAME, word), hass=hass)
-        self._name = "{}".format(word)
+            ENTITY_ID_FORMAT, "{}_{}_{}".format(NAME, word, sort_type), hass=hass)
+        self._name = "{}-{}".format(word, SORT_TYPES_REVERSE[sort_type])
         self._unit_of_measurement = "KRW"
         self._state = None
         self._extra_state_attributes = {}
@@ -171,6 +172,7 @@ class NaverShoppingSensor(SensorBase):
         self._client_id = client_id
         self._client_secret = client_secret
         self._refresh_period = refresh_period
+        self._sort_type = sort_type
 
         # self._device_class = SENSOR_TYPES[sensor_type][0]
         self._unique_id = self.entity_id
@@ -195,7 +197,7 @@ class NaverShoppingSensor(SensorBase):
                     'query': self._word,
                     'display': DISPLAY_COUNT,
                     'start': DISPLAY_START,
-                    'sort': SORT_TYPE
+                    'sort': self._sort_type
                 }
                 
                 self._value = None
