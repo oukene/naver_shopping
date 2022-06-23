@@ -7,7 +7,7 @@ import homeassistant.helpers.config_validation as cv
 # name for the integration.
 DOMAIN = "naver_shopping"
 NAME = "Naver Shopping"
-VERSION = "1.0.0"
+VERSION = "1.0.1"
 
 CONF_ADD_ANODHER = "add_another"
 

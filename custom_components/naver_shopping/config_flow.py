@@ -123,15 +123,12 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                 if e.original_name == host[CONF_WORD]:
                     name = e.original_name
 
-                    all_entities[e.entity_id] = '{} - {}'.format(
-                        name, host[CONF_WORD])
+                    all_entities[e.entity_id] = '{}'.format(
+                        name)
 
                     all_entities_by_id[(
-                                        #host[CONF_SWITCH_ENTITY], 
                                         host[CONF_WORD],
                                         host[CONF_REFRESH_PERIOD]
-                                        #host[CONF_PUSH_WAIT_TIME],
-                                        #host[CONF_PUSH_MAX]
                                     )] = e.entity_id
 
         if user_input is not None:
@@ -146,16 +143,12 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                     if all_entities_by_id[key] not in user_input[CONF_KEYWORDS]:
                         _LOGGER.debug("remove entity : %s", all_entities_by_id[key])
                         remove_entities.append(all_entities_by_id[key])
-                        #self.config_entry.data[CONF_DEVICES].remove( { host[CONF_HOST], [e.name for e in devices if e.id == all_devices_by_host[host[CONF_HOST]]] })
                     else:
                         _LOGGER.debug("append entity : %s", key[0])
                         self.data[CONF_KEYWORDS].append(
                             {
-                                #CONF_SWITCH_ENTITY: key[0],
                                 CONF_WORD: key[0],
                                 CONF_REFRESH_PERIOD: key[1]
-                                #CONF_PUSH_WAIT_TIME: key[2],
-                                #CONF_PUSH_MAX: key[3]
                             }
                         )
 
@@ -163,9 +156,6 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                     entity_registry.async_remove(id)
 
                 if user_input.get(CONF_ADD_ANODHER, False):
-                    # if len(self.devices) <= 0:
-                    #    return self.async_create_entry(title=self.cnfig_entry.data[CONF_AREA_NAME], data=self.config_entry.data)
-                    # else:
                     return await self.async_step_entity()
 
                 if len(self.data[CONF_KEYWORDS]) <= 0:
@@ -178,11 +168,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         options_schema = vol.Schema(
             {
                 vol.Optional(CONF_KEYWORDS, default=list(all_entities)): cv.multi_select(all_entities),
-                #vol.Optional(CONF_REFRESH_PERIOD, default=REFRESH_MIN): int,
                 vol.Optional(CONF_ADD_ANODHER): cv.boolean,
-
-                # vol.Optional(CONF_USE_SETUP_MODE, False, cv.boolean),
-                #vol.Optional(CONF_ADD_GROUP_DEVICE, False, cv.boolean),
             }
         )
 
@@ -199,21 +185,14 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                 # Input is valid, set data.
                 self.data[CONF_KEYWORDS].append(
                     {
-                        #CONF_SWITCH_ENTITY: user_input[CONF_SWITCH_ENTITY],
                         CONF_WORD: user_input.get(CONF_WORD, user_input[CONF_WORD]),
                         CONF_REFRESH_PERIOD: user_input.get(CONF_REFRESH_PERIOD, user_input[CONF_REFRESH_PERIOD])
-                        #CONF_PUSH_WAIT_TIME: user_input[CONF_PUSH_WAIT_TIME],
-                        #CONF_PUSH_MAX: user_input[CONF_PUSH_MAX],
                     }
                 )
 
                 # If user ticked the box show this form again so they can add an
                 # additional repo.
                 if user_input.get(CONF_ADD_ANODHER, False):
-                    # self.devices.remove(user_input[CONF_SWITCH_ENTITY])
-                    # if len(self.devices) <= 0:
-                    #    return self.async_create_entry(title=NAME, data=self.data)
-                    # else:
                     return await self.async_step_entity()
                 # User is done adding repos, create the config entry.
                 _LOGGER.debug("call async_create_entry")
@@ -223,15 +202,8 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
             step_id="entity",
             data_schema=vol.Schema(
                     {
-                        # 검색어
-                        # 갱신 주기
                         vol.Required(CONF_WORD, default=None): cv.string,
-                        # 분단위
                         vol.Required(CONF_REFRESH_PERIOD, default=REFRESH_MIN): int,
-                        #vol.Required(CONF_SWITCH_ENTITY, default=None): cv.string,
-                        #vol.Optional(CONF_NAME): cv.string,
-                        #vol.Required(CONF_PUSH_WAIT_TIME, default=1000): int,
-                        #vol.Required(CONF_PUSH_MAX, default=PUSH_MAX): int,
                         vol.Optional(CONF_ADD_ANODHER): cv.boolean,
                     }
             ), errors=errors

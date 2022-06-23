@@ -163,7 +163,6 @@ class NaverShoppingSensor(SensorBase):
         self.entity_id = async_generate_entity_id(
             ENTITY_ID_FORMAT, "{}_{}".format(NAME, word), hass=hass)
         self._name = "{}".format(word)
-        # self._name = "{} {}".format(device.device_id, SENSOR_TYPES[sensor_type][1])
         self._unit_of_measurement = "KRW"
         self._state = None
         self._extra_state_attributes = {}
@@ -177,22 +176,12 @@ class NaverShoppingSensor(SensorBase):
         self._unique_id = self.entity_id
         self._device = device
         self._loop = asyncio.get_event_loop()
-
-        #hass.data[DOMAIN]["listener"].append(async_track_state_change(
-        #    self.hass, switch_entity, self.switch_entity_listener))
-        #state = self.hass.states.get(switch_entity)
-
-        #if _is_valid_state(state):
-        #    self._attributes["switch state"] = state.state
-        #    self._switch_state = state.state
-        #    if state.state == "on":
-        #        self._force_off = True
-        #        self.hass.services.call('homeassistant', 'turn_off', {
-        #                                "entity_id": self._switch_entity}, False)
-
+        Timer(1, self.refreshTimer).start()
+    
+    def refreshTimer(self):
         self._loop.create_task(self.get_price())
+        Timer(self._refresh_period*60, self.refreshTimer).start()
 
-        
     async def get_price(self):
         try:
             headers: dict = {
@@ -209,6 +198,7 @@ class NaverShoppingSensor(SensorBase):
                     'sort': SORT_TYPE
                 }
                 
+                self._value = None
                 #_LOGGER.debug("headers : " + session.headers)
                 async with session.get(CONF_URL, params=params, headers=headers) as response:
                     #_LOGGER.debug(await response.text())
@@ -234,7 +224,8 @@ class NaverShoppingSensor(SensorBase):
             _LOGGER.error("get price error")
         
         finally:
-            Timer(self._refresh_period*60, self.get_price).start()
+            _LOGGER.debug("call next timer")
+            #Timer(self._refresh_period*60, self._loop.create_task(self.get_price())).start()
 
             
     """Sensor Properties"""
@@ -263,7 +254,6 @@ class NaverShoppingSensor(SensorBase):
     @property
     def state(self):
         """Return the state of the sensor."""
-        # return self._state
         return self._value
     
     @property
