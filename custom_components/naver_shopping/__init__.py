@@ -36,6 +36,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     _LOGGER.debug("call async_setup_entry")
     hass.data[DOMAIN][entry.entry_id] = DOMAIN
 
+    entry.async_on_unload(entry.add_update_listener(update_listener))
+
     # This creates each HA object for each platform your device requires.
     # It's done by calling the `async_setup_entry` function in each platform module.
     for component in PLATFORMS:
@@ -45,6 +47,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         )
 
     return True
+
+
+async def update_listener(hass, entry):
+    """Handle options update."""
+    await hass.config_entries.async_reload(entry.entry_id)
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):

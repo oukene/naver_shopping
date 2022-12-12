@@ -12,6 +12,7 @@ from markupsafe import string
 import voluptuous as vol
 import socket
 from typing import Any, Dict, Optional
+from datetime import datetime
 
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 import homeassistant.helpers.config_validation as cv
@@ -167,6 +168,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                         device_registry.async_remove_device(d.id)
 
                 # User is done adding repos, create the config entry.
+                self.data["modifydatetime"] = datetime.now()
                 return self.async_create_entry(title=NAME, data=self.data)
 
         options_schema = vol.Schema(
@@ -201,6 +203,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                     return await self.async_step_entity()
                 # User is done adding repos, create the config entry.
                 _LOGGER.debug("call async_create_entry")
+                self.data["modifydatetime"] = datetime.now()
                 return self.async_create_entry(title=NAME, data=self.data)
 
         return self.async_show_form(
