@@ -20,16 +20,12 @@ import homeassistant.helpers.config_validation as cv
 import homeassistant.helpers.entity_registry
 
 from homeassistant.helpers.device_registry import (
-    async_get_registry,
+    async_get,
     async_entries_for_config_entry
 )
 
 from .const import CONF_CLIENT_ID, CONF_CLIENT_SECRET, CONF_REFRESH_PERIOD, CONF_KEYWORDS, CONF_SORT_TYPE, CONF_WORD, DOMAIN, CONF_ADD_ANODHER, NAME, REFRESH_MIN, SORT_TYPES, SORT_TYPES_REVERSE
 
-from homeassistant.helpers.device_registry import (
-    async_get_registry,
-    async_entries_for_config_entry
-)
 from homeassistant import config_entries, core, exceptions
 from homeassistant.core import callback
 
@@ -110,10 +106,10 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         all_entities = {}
         all_entities_by_id = {}
 
-        entity_registry = await homeassistant.helpers.entity_registry.async_get_registry(self.hass)
+        entity_registry = await homeassistant.helpers.entity_registry.async_get(self.hass)
         entities = homeassistant.helpers.entity_registry.async_entries_for_config_entry(entity_registry, self.config_entry.entry_id)
 
-        device_registry = await async_get_registry(self.hass)
+        device_registry = await async_get(self.hass)
         devices = async_entries_for_config_entry(device_registry, self.config_entry.entry_id)
 
         #for e in entities:
