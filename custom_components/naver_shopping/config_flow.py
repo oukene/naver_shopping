@@ -1,20 +1,9 @@
 """Config flow for Hello World integration."""
-from copy import deepcopy
-from distutils.command.config import config
 import logging
-from select import select
-from unicodedata import name
-from xmlrpc.client import boolean
-import aiohttp
-import asyncio
-import json
-from markupsafe import string
 import voluptuous as vol
-import socket
 from typing import Any, Dict, Optional
 from datetime import datetime
 
-from homeassistant.helpers.aiohttp_client import async_get_clientsession
 import homeassistant.helpers.config_validation as cv
 
 import homeassistant.helpers.entity_registry
@@ -26,7 +15,7 @@ from homeassistant.helpers.device_registry import (
 
 from .const import CONF_CLIENT_ID, CONF_CLIENT_SECRET, CONF_REFRESH_PERIOD, CONF_KEYWORDS, CONF_SORT_TYPE, CONF_WORD, DOMAIN, CONF_ADD_ANODHER, NAME, REFRESH_MIN, SORT_TYPES, SORT_TYPES_REVERSE
 
-from homeassistant import config_entries, core, exceptions
+from homeassistant import config_entries, exceptions
 from homeassistant.core import callback
 
 
@@ -106,13 +95,16 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         all_entities = {}
         all_entities_by_id = {}
 
-        entity_registry = await homeassistant.helpers.entity_registry.async_get(self.hass)
-        entities = homeassistant.helpers.entity_registry.async_entries_for_config_entry(entity_registry, self.config_entry.entry_id)
+        entity_registry = homeassistant.helpers.entity_registry.async_get(
+            self.hass)
+        entities = homeassistant.helpers.entity_registry.async_entries_for_config_entry(
+            entity_registry, self.config_entry.entry_id)
 
-        device_registry = await async_get(self.hass)
-        devices = async_entries_for_config_entry(device_registry, self.config_entry.entry_id)
+        device_registry = async_get(self.hass)
+        devices = async_entries_for_config_entry(
+            device_registry, self.config_entry.entry_id)
 
-        #for e in entities:
+        # for e in entities:
         #    _LOGGER.debug("entity id : %s, name : %s",e.entity_id, e.original_name)
 
         # Default value for our multi-select.
@@ -126,10 +118,10 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                         name)
 
                     all_entities_by_id[(
-                                        host[CONF_WORD],
-                                        host[CONF_SORT_TYPE],
-                                        host[CONF_REFRESH_PERIOD]
-                                    )] = e.entity_id
+                        host[CONF_WORD],
+                        host[CONF_SORT_TYPE],
+                        host[CONF_REFRESH_PERIOD]
+                    )] = e.entity_id
 
         if user_input is not None:
             if not errors:
@@ -141,7 +133,8 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
 
                 for key in all_entities_by_id:
                     if all_entities_by_id[key] not in user_input[CONF_KEYWORDS]:
-                        _LOGGER.debug("remove entity : %s", all_entities_by_id[key])
+                        _LOGGER.debug("remove entity : %s",
+                                      all_entities_by_id[key])
                         remove_entities.append(all_entities_by_id[key])
                     else:
                         _LOGGER.debug("append entity : %s", key[0])
@@ -189,7 +182,8 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                     {
                         CONF_WORD: user_input.get(CONF_WORD, user_input[CONF_WORD]),
                         CONF_SORT_TYPE: SORT_TYPES[user_input.get(CONF_SORT_TYPE, user_input[CONF_SORT_TYPE])],
-                        CONF_REFRESH_PERIOD: user_input.get(CONF_REFRESH_PERIOD, user_input[CONF_REFRESH_PERIOD])
+                        CONF_REFRESH_PERIOD: user_input.get(
+                            CONF_REFRESH_PERIOD, user_input[CONF_REFRESH_PERIOD])
                     }
                 )
 
@@ -208,10 +202,10 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                     {
                         vol.Required(CONF_WORD, default=None): cv.string,
                         vol.Required(CONF_SORT_TYPE, default=SORT_TYPES_REVERSE["sim"]): vol.In([SORT_TYPES_REVERSE["sim"],
-                                                                                        SORT_TYPES_REVERSE["asc"],
-                                                                                        SORT_TYPES_REVERSE["dsc"],
-                                                                                        SORT_TYPES_REVERSE["date"]
-                                                                                        ]),
+                                                                                                 SORT_TYPES_REVERSE["asc"],
+                                                                                                 SORT_TYPES_REVERSE["dsc"],
+                                                                                                 SORT_TYPES_REVERSE["date"]
+                                                                                                 ]),
                         vol.Required(CONF_REFRESH_PERIOD, default=REFRESH_MIN): int,
                         vol.Optional(CONF_ADD_ANODHER): cv.boolean,
                     }
