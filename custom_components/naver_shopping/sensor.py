@@ -161,7 +161,7 @@ class NaverShoppingSensor(SensorBase):
         self._state = None
         self._extra_state_attributes = {}
         self._icon = None
-        self._value = 0
+        self._value = None
         self._client_id = client_id
         self._client_secret = client_secret
         self._refresh_period = refresh_period
