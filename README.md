@@ -32,3 +32,4 @@ HACS 의 custom repository에 https://github.com/oukene/naver_shopping 주소를
 History
 v1.0.0 - 2022.06.22 - 최초 작성<br>
 v1.0.2 - 2022.06.22 - 검색 옵션 추가
+v1.0.6 - 2023.10.19 - filter, exclude 추가, UI 처리 변경
