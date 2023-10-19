@@ -10,7 +10,7 @@
                     "client_id": "X-Naver-Client-Id",
                     "client_id2": "X-Naver-Client-Secret"
                 },
-                "description": "Click OK to add intergration"
+                "description": "Enter Naver Shopping API account information"
             }
         }
     },
@@ -19,18 +19,34 @@
             "init": {
                 "title": "Naver Shopping Options",
                 "data": {
-                    "add_another": "Select to add a search keyword"
-                },
-                "description": "If unchecked it will be deleted"
+                    "option_select": "What to do?"
+                }
+            },
+            "select": {
+                "title": "Select an entity",
+                "data": {
+                    "option_entities": "Select the entity you want to edit",
+                    "option_delete": "Delete selected entity"
+                }
             },
             "entity": {
                 "title": "add search keyword",
                 "data": {
                     "word": "search keyword",
                     "sort_type": "sort type",
+                    "filter": "search filter",
+                    "exclude": "exclude filter",
                     "refresh_period": "refresh period(minute)",
                     "add_another": "add more search keyword"
                 }
+            }
+        }
+    },
+    "selector": {
+        "option_select": {
+            "options": {
+                "option_modify": "Modify an entity",
+                "option_add": "Add an entity"
             }
         }
     }

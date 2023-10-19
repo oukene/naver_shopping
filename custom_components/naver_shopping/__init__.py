@@ -19,6 +19,7 @@ async def async_setup(hass: HomeAssistant, config: dict):
     # Ensure our name space for storing objects is a known type. A dict is
     # common/preferred as it allows a separate instance of your class for each
     # instance that has been created in the UI.
+    _LOGGER.debug("call async_setup")
     hass.data.setdefault(DOMAIN, {})
 
     return True
@@ -46,6 +47,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 async def update_listener(hass, entry):
     """Handle options update."""
+    _LOGGER.debug("call update_listener")
     await hass.config_entries.async_reload(entry.entry_id)
 
 

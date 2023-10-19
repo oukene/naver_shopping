@@ -37,16 +37,18 @@ async def async_setup_entry(hass, config_entry, async_add_devices):
 
     new_devices = []
 
-    for entity in config_entry.data.get(CONF_KEYWORDS):
+    for entity in config_entry.options.get(CONF_KEYWORDS, {}):
         new_devices.append(
             NaverShoppingSensor(
                 hass,
                 device,
                 client_id,
                 client_secret,
-                entity[CONF_WORD],
-                entity[CONF_SORT_TYPE],
-                entity[CONF_REFRESH_PERIOD]
+                entity.get(CONF_WORD),
+                entity.get(CONF_SORT_TYPE),
+                entity.get(CONF_FILTER, []),
+                entity.get(CONF_EXCLUDE, []),
+                entity.get(CONF_REFRESH_PERIOD)
             )
         )
 
@@ -146,8 +148,9 @@ class SensorBase(SensorEntity):
 
 class NaverShoppingSensor(SensorBase):
     """Representation of a Thermal Comfort Sensor."""
-
-    def __init__(self, hass, device, client_id, client_secret, word, sort_type, refresh_period):
+    _attr_has_entity_name = True
+    
+    def __init__(self, hass, device, client_id, client_secret, word, sort_type, filter, exclude, refresh_period):
         """Initialize the sensor."""
         super().__init__(device)
 
@@ -160,12 +163,26 @@ class NaverShoppingSensor(SensorBase):
         self._unit_of_measurement = "KRW"
         self._state = None
         self._extra_state_attributes = {}
+        self._extra_state_attributes[CONF_SORT_TYPE] = SORT_TYPES_REVERSE[sort_type]
+        self._extra_state_attributes[CONF_FILTER] = filter
+        self._extra_state_attributes[CONF_EXCLUDE] = exclude
         self._icon = None
         self._value = None
         self._client_id = client_id
         self._client_secret = client_secret
         self._refresh_period = refresh_period
         self._sort_type = sort_type
+
+        self._filter = ""
+        self._exclude = ""
+        for f in self._filter:
+            self._filter = self._filter + f
+
+        for e in self._exclude:
+            self._exclude = self._exclude + e + ":"
+
+        self._filter = filter
+        self._exclude = exclude
 
         # self._device_class = SENSOR_TYPES[sensor_type][0]
         self._unique_id = self.entity_id
@@ -183,6 +200,7 @@ class NaverShoppingSensor(SensorBase):
                 "X-Naver-Client-Id": self._client_id,
                 "X-Naver-Client-Secret": self._client_secret,
             }
+            
             async with aiohttp.ClientSession(headers = headers) as session:
                 _LOGGER.debug("url : " + CONF_URL)
                 
@@ -190,7 +208,9 @@ class NaverShoppingSensor(SensorBase):
                     'query': self._word,
                     'display': DISPLAY_COUNT,
                     'start': DISPLAY_START,
-                    'sort': self._sort_type
+                    'sort': self._sort_type,
+                    'filter': self._filter,
+                    'exclude': self._exclude
                 }
                 
                 self._value = None
