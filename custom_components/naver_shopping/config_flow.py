@@ -124,7 +124,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                         self.data[CONF_KEYWORDS].remove(conf)
                     except:
                         """"""
-
+                    self.data["modifydatetime"] = datetime.now()
                     return self.async_create_entry(title=NAME, data=self.data)
                     
 
@@ -173,16 +173,16 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         errors: Dict[str, str] = {}
         if user_input is not None:
             if not errors:
-                conf = None
-                for k in self.data[CONF_KEYWORDS]:
+                if self._selected_option:
+                    for k in self.data[CONF_KEYWORDS]:
 
-                    _LOGGER.debug("input : " + str(user_input.get(CONF_WORD) + user_input.get(CONF_SORT_TYPE)))
-                    _LOGGER.debug(
-                        "find : " + str(k.get(CONF_WORD) + "-" +
-                                        SORT_TYPES_REVERSE[k.get(CONF_SORT_TYPE)]))
-                    if user_input.get(CONF_WORD) + "-" + user_input.get(CONF_SORT_TYPE) == k.get(CONF_WORD) + "-" + SORT_TYPES_REVERSE[k.get(CONF_SORT_TYPE)]:
-                        self.data[CONF_KEYWORDS].remove(k)
-                        break
+                        _LOGGER.debug("input : " + str(user_input.get(CONF_WORD) + user_input.get(CONF_SORT_TYPE)))
+                        _LOGGER.debug(
+                            "find : " + str(k.get(CONF_WORD) + "-" +
+                                            SORT_TYPES_REVERSE[k.get(CONF_SORT_TYPE)]))
+                        if self._selected_option.get(CONF_WORD) + "-" + SORT_TYPES_REVERSE[self._selected_option.get(CONF_SORT_TYPE)] == k.get(CONF_WORD) + "-" + SORT_TYPES_REVERSE[k.get(CONF_SORT_TYPE)]:
+                            self.data[CONF_KEYWORDS].remove(k)
+                            break
 
                 # Input is valid, set data.
                 self.data[CONF_KEYWORDS].append(
