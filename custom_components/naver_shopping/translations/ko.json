@@ -1,6 +1,9 @@
 {
     "title": "\ub124\uc774\ubc84 \uc1fc\ud551",
     "config": {
+        "abort": {
+            "single_instance_allowed": "한개의 인스턴스만 설치할 수 있습니다."
+        },
         "step": {
             "confirm": {
                 "description": "\uc124\uce58 \ud558\uc2dc\uaca0\uc2b5\ub2c8\uae4c?"

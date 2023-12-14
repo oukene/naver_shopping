@@ -1,6 +1,9 @@
 {
     "title": "Naver Shopping",
     "config": {
+        "abort": {
+            "single_instance_allowed": "Component installation cannot be duplicated. Use the installed components"
+        },
         "step": {
             "confirm": {
                 "description": "Do you want to set up?"
